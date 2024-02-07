@@ -14,30 +14,36 @@ class BluetoothOffScreen extends StatelessWidget {
     return const Icon(
       Icons.bluetooth_disabled,
       size: 200.0,
-      color: Colors.white54,
+      color: Color(0xFF49454F),
     );
   }
 
   Widget buildTitle(BuildContext context) {
     String? state = adapterState?.toString().split(".").last;
+    if (state != null && state == "off") {
+      state = "desativado";
+    }
     return Text(
-      'Bluetooth Adapter is ${state != null ? state : 'not available'}',
-      style: Theme.of(context).primaryTextTheme.titleSmall?.copyWith(color: Colors.white),
-    );
+        'O adaptador Bluetooth está ${state != null ? state : 'indisponível'}',
+        style: Theme.of(context)
+            .primaryTextTheme
+            .titleSmall
+            ?.copyWith(color: const Color(0xFF49454F)));
   }
 
   Widget buildTurnOnButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: ElevatedButton(
-        child: const Text('TURN ON'),
+        child: const Text('ATIVAR',style: TextStyle(color: Color(0xFF4BA4E7)),),
         onPressed: () async {
           try {
             if (Platform.isAndroid) {
               await FlutterBluePlus.turnOn();
             }
           } catch (e) {
-            Snackbar.show(ABC.a, prettyException("Error Turning On:", e), success: false);
+            Snackbar.show(ABC.a, prettyException("Error Turning On:", e),
+                success: false);
           }
         },
       ),
@@ -49,7 +55,7 @@ class BluetoothOffScreen extends StatelessWidget {
     return ScaffoldMessenger(
       key: Snackbar.snackBarKeyA,
       child: Scaffold(
-        backgroundColor: Colors.lightBlue,
+        backgroundColor: const Color(0xFFD9D9D9),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
