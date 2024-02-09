@@ -8,15 +8,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:poc/screens/bus_list.dart';
 import 'package:poc/screens/no_nearby_stops.dart';
+import 'package:poc/screens/waiting_bus.dart';
 
 import 'screens/bluetooth_off_screen.dart';
 import 'screens/scan_screen.dart';
-
+/*
 void main() {
   FlutterBluePlus.setLogLevel(LogLevel.verbose, color: true);
-  runApp(const BusList());
+    runApp(const BusList());
 }
-
+*/
+void main() {
+  FlutterBluePlus.setLogLevel(LogLevel.verbose, color: true);
+  runApp(MaterialApp(
+    home: const BusListPage(),
+    color: Colors.lightBlue,
+    navigatorObservers: [BluetoothAdapterStateObserver()],
+  ));
+}
 //
 // This widget shows BluetoothOffScreen or
 // ScanScreen depending on the adapter state
