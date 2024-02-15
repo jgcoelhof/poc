@@ -1,23 +1,15 @@
 // Copyright 2017-2023, Charles Weinberger & Paul DeMarco.
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-/*
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:poc/screens/bus_list.dart';
-import 'package:poc/screens/no_nearby_stops.dart';
-import 'package:poc/screens/waiting_bus.dart';
+import 'package:poc/pages/bus_list_page.dart';
+import 'pages/bluetooth_off_screen.dart';
+import 'package:poc/services/api_service.dart';
 
-import 'screens/bluetooth_off_screen.dart';
-import 'screens/scan_screen.dart';
-/*
-void main() {
-  FlutterBluePlus.setLogLevel(LogLevel.verbose, color: true);
-    runApp(const BusList());
-}
-*/
 void main() {
   FlutterBluePlus.setLogLevel(LogLevel.verbose, color: true);
   runApp(MaterialApp(
@@ -26,10 +18,30 @@ void main() {
     navigatorObservers: [BluetoothAdapterStateObserver()],
   ));
 }
+/*
+void main() async {
+  WidgetsFlutterBinding
+      .ensureInitialized(); // Adiciona isso para garantir que o Flutter esteja inicializado
+  FlutterBluePlus.setLogLevel(LogLevel.verbose, color: true);
+
+  // Chama fetchAPI dentro de uma função assíncrona
+  final json = await fetchAPI();
+
+  // Verifica se os dados não estão vazios antes de imprimir
+  if (json.isNotEmpty) {
+    print(json);
+  } else {
+    print('A resposta da API está vazia.');
+  }
+
+  runApp(FlutterBlueApp());
+}*/
+
 //
 // This widget shows BluetoothOffScreen or
 // ScanScreen depending on the adapter state
 //
+
 class FlutterBlueApp extends StatefulWidget {
   const FlutterBlueApp({Key? key}) : super(key: key);
 
@@ -45,7 +57,8 @@ class _FlutterBlueAppState extends State<FlutterBlueApp> {
   @override
   void initState() {
     super.initState();
-    _adapterStateStateSubscription = FlutterBluePlus.adapterState.listen((state) {
+    _adapterStateStateSubscription =
+        FlutterBluePlus.adapterState.listen((state) {
       _adapterState = state;
       if (mounted) {
         setState(() {});
@@ -62,7 +75,10 @@ class _FlutterBlueAppState extends State<FlutterBlueApp> {
   @override
   Widget build(BuildContext context) {
     Widget screen = _adapterState == BluetoothAdapterState.on
-        ? const ScanScreen()
+        ? MaterialApp(
+            home: BusListPage(),
+            color: Colors.lightBlue,
+            navigatorObservers: [BluetoothAdapterStateObserver()])
         : BluetoothOffScreen(adapterState: _adapterState);
 
     return MaterialApp(
@@ -84,7 +100,8 @@ class BluetoothAdapterStateObserver extends NavigatorObserver {
     super.didPush(route, previousRoute);
     if (route.settings.name == '/DeviceScreen') {
       // Start listening to Bluetooth state changes when a new route is pushed
-      _adapterStateSubscription ??= FlutterBluePlus.adapterState.listen((state) {
+      _adapterStateSubscription ??=
+          FlutterBluePlus.adapterState.listen((state) {
         if (state != BluetoothAdapterState.on) {
           // Pop the current route if Bluetooth is off
           navigator?.pop();
@@ -102,24 +119,9 @@ class BluetoothAdapterStateObserver extends NavigatorObserver {
   }
 }
 
-*/ /*
-import 'dart:convert';
 
-import 'package:http/http.dart' as http;
 
-Future<void> main() async {
-  final json = await fetch();
-  print(json);
-}
-
-Future<List<dynamic>> fetch() async {
-  var url = 'https://zn4.m2mcontrol.com.br/api//forecast/lines/load/forecast/lines/fromPoint/106053/281';
-  var response = await http.get(Uri.parse(url));
-  var json = jsonDecode(response.body);
-  return json;
-}
-*/
-
+/*
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -135,3 +137,4 @@ Future<List<dynamic>> fetch() async {
   var json = jsonDecode(response.body);
   return json;
 }
+*/
