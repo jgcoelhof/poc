@@ -1,7 +1,7 @@
 // Copyright 2017-2023, Charles Weinberger & Paul DeMarco.
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-
+/*
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -102,3 +102,36 @@ class BluetoothAdapterStateObserver extends NavigatorObserver {
   }
 }
 
+*/ /*
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+
+Future<void> main() async {
+  final json = await fetch();
+  print(json);
+}
+
+Future<List<dynamic>> fetch() async {
+  var url = 'https://zn4.m2mcontrol.com.br/api//forecast/lines/load/forecast/lines/fromPoint/106053/281';
+  var response = await http.get(Uri.parse(url));
+  var json = jsonDecode(response.body);
+  return json;
+}
+*/
+
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+
+Future<void> main() async {
+  final json = await fetch();
+  print(json[0]['id']);
+}
+
+Future<List<dynamic>> fetch() async {
+  var url = 'https://zn4.m2mcontrol.com.br/api//forecast/lines/load/busStop/-3.7420233/-38.53712/281?radiusInMeters=500';
+  var response = await http.get(Uri.parse(url));
+  var json = jsonDecode(response.body);
+  return json;
+}
