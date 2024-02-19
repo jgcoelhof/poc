@@ -85,7 +85,7 @@ class _ScanScreenState extends State<ScanScreen> {
     });
     MaterialPageRoute route = MaterialPageRoute(
         builder: (context) => DeviceScreen(device: device),
-        settings: RouteSettings(name: '/DeviceScreen'));
+        settings: const RouteSettings(name: '/DeviceScreen'));
     Navigator.of(context).push(route);
   }
 
@@ -96,7 +96,7 @@ class _ScanScreenState extends State<ScanScreen> {
     if (mounted) {
       setState(() {});
     }
-    return Future.delayed(Duration(milliseconds: 500));
+    return Future.delayed(const Duration(milliseconds: 500));
   }
 
   Widget buildScanButton(BuildContext context) {
@@ -145,7 +145,7 @@ class _ScanScreenState extends State<ScanScreen> {
             onOpen: () => Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => DeviceScreen(device: d),
-                settings: RouteSettings(name: '/DeviceScreen'),
+                settings: const RouteSettings(name: '/DeviceScreen'),
               ),
             ),
             onConnect: () => onConnectPressed(d),

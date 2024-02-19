@@ -1,18 +1,6 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
-
-Future<void> main() async {
-  try {
-    final json = await fetchAPI();
-    if (json.isNotEmpty) {
-      print(json);
-    } else {
-      print('A resposta da API está vazia.');
-    }
-  } catch (e) {
-    print('Erro ao buscar dados da API: $e');
-  }
-}
 
 Future<List<dynamic>> fetchAPI() async {
   var url =
@@ -23,7 +11,7 @@ Future<List<dynamic>> fetchAPI() async {
     var json = jsonDecode(response.body);
     return json;
   } else {
-    print('Erro ao acessar a API. Código de status: ${response.statusCode}');
+    log('Erro ao acessar a API. Código de status: ${response.statusCode}');
     return [];
   }
 }

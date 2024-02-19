@@ -2,6 +2,8 @@
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -10,32 +12,20 @@ import 'package:poc/pages/bus_list_page.dart';
 import 'pages/bluetooth_off_screen.dart';
 import 'package:poc/services/api_service.dart';
 
-void main() {
-  FlutterBluePlus.setLogLevel(LogLevel.verbose, color: true);
-  runApp(MaterialApp(
-    home: const BusListPage(),
-    color: Colors.lightBlue,
-    navigatorObservers: [BluetoothAdapterStateObserver()],
-  ));
-}
-/*
-void main() async {
-  WidgetsFlutterBinding
-      .ensureInitialized(); // Adiciona isso para garantir que o Flutter esteja inicializado
-  FlutterBluePlus.setLogLevel(LogLevel.verbose, color: true);
-
-  // Chama fetchAPI dentro de uma função assíncrona
-  final json = await fetchAPI();
-
-  // Verifica se os dados não estão vazios antes de imprimir
-  if (json.isNotEmpty) {
-    print(json);
-  } else {
-    print('A resposta da API está vazia.');
+Future<void> main() async {
+  try {
+    final json = await fetchAPI();
+    if (json.isNotEmpty) {
+      print(json);
+    } else {
+      print('A resposta da API está vazia.');
+    }
+  } catch (e) {
+    print('Erro ao buscar dados da API: $e');
   }
-
-  runApp(FlutterBlueApp());
-}*/
+  FlutterBluePlus.setLogLevel(LogLevel.verbose, color: true);
+  runApp(const FlutterBlueApp());
+}
 
 //
 // This widget shows BluetoothOffScreen or
@@ -76,7 +66,7 @@ class _FlutterBlueAppState extends State<FlutterBlueApp> {
   Widget build(BuildContext context) {
     Widget screen = _adapterState == BluetoothAdapterState.on
         ? MaterialApp(
-            home: BusListPage(),
+            home: const BusListPage(),
             color: Colors.lightBlue,
             navigatorObservers: [BluetoothAdapterStateObserver()])
         : BluetoothOffScreen(adapterState: _adapterState);
@@ -123,18 +113,32 @@ class BluetoothAdapterStateObserver extends NavigatorObserver {
 
 /*
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 
 Future<void> main() async {
-  final json = await fetch();
-  print(json[0]['id']);
+  try {
+    final json = await fetchAPI();
+    if (json.isNotEmpty) {
+      print(json);
+    } else {
+      print('A resposta da API está vazia.');
+    }
+  } catch (e) {
+    print('Erro ao buscar dados da API: $e');
+  }
 }
 
-Future<List<dynamic>> fetch() async {
-  var url = 'https://zn4.m2mcontrol.com.br/api//forecast/lines/load/busStop/-3.7420233/-38.53712/281?radiusInMeters=500';
+Future<List<dynamic>> fetchAPI() async {
+  var url =
+      'https://zn4.m2mcontrol.com.br/api//forecast/lines/load/forecast/lines/fromPoint/107282/281';
   var response = await http.get(Uri.parse(url));
-  var json = jsonDecode(response.body);
-  return json;
+
+  if (response.statusCode == 200) {
+    var json = jsonDecode(response.body);
+    return json;
+  } else {
+    print('Erro ao acessar a API. Código de status: ${response.statusCode}');
+    return [];
+  }
 }
 */

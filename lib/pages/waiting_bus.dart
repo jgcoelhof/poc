@@ -1,43 +1,94 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+
+Future<Map<String, dynamic>?> fetchBusData() async {
+  var url =
+      'https://zn4.m2mcontrol.com.br/api//forecast/lines/load/forecast/lines/fromPoint/106751/281';
+  var response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    var json = jsonDecode(response.body);
+    log('API response: $json');
+
+    if (json is List && json.isNotEmpty) {
+      var firstBus = json[0];
+      return {
+        'busNumber': firstBus['busServiceNumber'] ?? '',
+        'arrivalTime': firstBus['arrivalTime'] ?? '',
+        'busName': firstBus['patternName'] ?? '',
+      };
+    }
+  } else {
+    log('Erro ao acessar a API. Código de status: ${response.statusCode}');
+  }
+  return null;
+}
 
 class WaitingBusPage extends StatefulWidget {
-  const WaitingBusPage({super.key});
+  const WaitingBusPage({Key? key}) : super(key: key);
 
   @override
   State<WaitingBusPage> createState() => _WaitingBusPageState();
 }
 
 class _WaitingBusPageState extends State<WaitingBusPage> {
+  late String busNumber;
+  late String busName;
+  late String arrivalTime;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchBusData().then((data) {
+      if (data != null) {
+        setState(() {
+          busNumber = data['busNumber']!;
+          busName = data['busName']!;
+          arrivalTime = data['arrivalTime']!;
+        });
+      }
+    }).catchError((error) {
+      log('Erro ao buscar dados da API: $error');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.ltr,
       child: Scaffold(
         appBar: AppBar(
-            leading: const Icon(Icons.watch_later_rounded,color: Colors.white,),
-            backgroundColor: const Color(0xFF5EB4F0),
-            centerTitle: true,
-            title: Text(
-              "Aguardando ônibus",
-              style: GoogleFonts.quicksand(
-                fontSize: 16.0,
-                fontWeight: FontWeight.w500,
-                height: 1.364,
-                letterSpacing: 0.0,
-                color: Colors.white,
-              ),
-            )),
+          leading: const Icon(
+            Icons.watch_later_rounded,
+            color: Colors.white,
+          ),
+          backgroundColor: const Color(0xFF5EB4F0),
+          centerTitle: true,
+          title: Text(
+            "Aguardando ônibus",
+            style: GoogleFonts.quicksand(
+              fontSize: 16.0,
+              fontWeight: FontWeight.w500,
+              height: 1.364,
+              letterSpacing: 0.0,
+              color: Colors.white,
+            ),
+          ),
+        ),
         body: Center(
           child: Column(
             children: [
               const SizedBox(
                 height: 35,
               ),
-              const Text(
-                '075',
+              Text(
+                busNumber,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Color(0xFF4BA4E3),
                   fontSize: 120,
                   fontFamily: 'Saira SemiCondensed',
@@ -45,11 +96,11 @@ class _WaitingBusPageState extends State<WaitingBusPage> {
                   height: 0,
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 70),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 70),
                 child: Text(
-                  "Campus do Pici/Unifor",
-                  style: TextStyle(
+                  busName,
+                  style: const TextStyle(
                     color: Color(0xFF132632),
                     fontSize: 24,
                     fontFamily: 'Roboto',
@@ -61,10 +112,10 @@ class _WaitingBusPageState extends State<WaitingBusPage> {
               const SizedBox(
                 height: 40,
               ),
-              const Text.rich(
+              Text.rich(
                 TextSpan(
                   children: [
-                    TextSpan(
+                    const TextSpan(
                       text: 'Chega em ',
                       style: TextStyle(
                         color: Color(0xFF132632),
@@ -75,8 +126,8 @@ class _WaitingBusPageState extends State<WaitingBusPage> {
                       ),
                     ),
                     TextSpan(
-                      text: '1 minuto',
-                      style: TextStyle(
+                      text: arrivalTime,
+                      style: const TextStyle(
                         color: Color(0xFF132632),
                         fontSize: 16,
                         fontFamily: 'Roboto',
@@ -144,7 +195,10 @@ class _WaitingBusPageState extends State<WaitingBusPage> {
                     ],
                   ),
                 ),
-              ),const SizedBox(height: 40,)
+              ),
+              const SizedBox(
+                height: 40,
+              )
             ],
           ),
         ),

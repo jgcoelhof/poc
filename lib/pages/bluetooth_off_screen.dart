@@ -24,7 +24,7 @@ class BluetoothOffScreen extends StatelessWidget {
       state = "desativado";
     }
     return Text(
-        'O adaptador Bluetooth está ${state != null ? state : 'indisponível'}',
+        'O adaptador Bluetooth está ${state ?? 'indisponível'}',
         style: Theme.of(context)
             .primaryTextTheme
             .titleSmall
