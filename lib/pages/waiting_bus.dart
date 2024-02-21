@@ -29,7 +29,16 @@ Future<Map<String, dynamic>?> fetchBusData() async {
 }
 
 class WaitingBusPage extends StatefulWidget {
-  const WaitingBusPage({Key? key}) : super(key: key);
+  final String busNumber;
+  final String busName;
+  final String arrivalTime;
+
+  const WaitingBusPage({
+    Key? key,
+    required this.busNumber,
+    required this.busName,
+    required this.arrivalTime,
+  }) : super(key: key);
 
   @override
   State<WaitingBusPage> createState() => _WaitingBusPageState();
@@ -43,17 +52,9 @@ class _WaitingBusPageState extends State<WaitingBusPage> {
   @override
   void initState() {
     super.initState();
-    fetchBusData().then((data) {
-      if (data != null) {
-        setState(() {
-          busNumber = data['busNumber']!;
-          busName = data['busName']!;
-          arrivalTime = data['arrivalTime']!;
-        });
-      }
-    }).catchError((error) {
-      log('Erro ao buscar dados da API: $error');
-    });
+    busNumber = widget.busNumber;
+    busName = widget.busName;
+    arrivalTime = widget.arrivalTime;
   }
 
   @override
@@ -86,7 +87,8 @@ class _WaitingBusPageState extends State<WaitingBusPage> {
                 height: 35,
               ),
               Text(
-                busNumber,
+                busNumber ??
+                    '', // Usando operador de coalescência nula para lidar com valores nulos
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: Color(0xFF4BA4E3),
@@ -99,7 +101,8 @@ class _WaitingBusPageState extends State<WaitingBusPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 70),
                 child: Text(
-                  busName,
+                  busName ??
+                      '', // Usando operador de coalescência nula para lidar com valores nulos
                   style: const TextStyle(
                     color: Color(0xFF132632),
                     fontSize: 24,
@@ -126,7 +129,8 @@ class _WaitingBusPageState extends State<WaitingBusPage> {
                       ),
                     ),
                     TextSpan(
-                      text: arrivalTime,
+                      text: arrivalTime ??
+                          '', // Usando operador de coalescência nula para lidar com valores nulos
                       style: const TextStyle(
                         color: Color(0xFF132632),
                         fontSize: 16,

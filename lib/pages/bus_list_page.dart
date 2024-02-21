@@ -144,16 +144,20 @@ class _BusListPageState extends State<BusListPage> {
                                   const SizedBox(
                                     height: 25,
                                   ),
-                                  InkWell(
-                                    onTap: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return confirmBusDialog(
-                                              context, bus["nameLine"]);
-                                        },
-                                      );
-                                    },
+            InkWell(
+  onTap: () {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return confirmBusDialog(
+          context,
+          bus["busServiceNumber"].toString(),
+          bus["patternName"].toString(),
+          bus["arrivalTime"].toString()
+        );
+      },
+    );
+  },
                                     child: Padding(
                                       padding: const EdgeInsets.all(
                                           8.0), // Ajuste o padding conforme necessário

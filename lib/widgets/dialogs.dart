@@ -1,19 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:poc/pages/waiting_bus.dart';
+import 'package:flutter/material.dart';
+import 'package:poc/pages/waiting_bus.dart';
 
-Widget confirmBusDialog(BuildContext context, String busName) {
+Widget confirmBusDialog(BuildContext context, String busNumber, String busName, String arrivalTime) {
+  // Calcula a altura do texto do busName
+  final double busNameTextHeight = _calculateTextHeight(busName);
+
+  // Define a altura máxima do AlertDialog
+  final double maxDialogHeight = 205.0;
+
   return AlertDialog(
     content: SingleChildScrollView(
       child: SizedBox(
         width: 310,
-        height: 190,
+        // Limita a altura do AlertDialog
+        height: busNameTextHeight > maxDialogHeight ? maxDialogHeight : busNameTextHeight + 190,
         child: Column(
           children: [
             const SizedBox(
               height: 20,
             ),
             Text(
-              busName,
+              busName, // Usando o nome do ônibus fornecido
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Color(0xFF132632),
@@ -39,11 +48,14 @@ Widget confirmBusDialog(BuildContext context, String busName) {
               ),
               child: TextButton(
                 onPressed: () {
-                  // Ao confirmar, navegue para a tela WaitingBusPage
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const WaitingBusPage(),
+                      builder: (context) => WaitingBusPage(
+                        busNumber: busNumber,
+                        busName: busName,
+                        arrivalTime: arrivalTime,
+                      ),
                     ),
                   );
                 },
@@ -99,6 +111,22 @@ Widget confirmBusDialog(BuildContext context, String busName) {
   );
 }
 
+// Função auxiliar para calcular a altura do texto
+double _calculateTextHeight(String text) {
+  final TextPainter textPainter = TextPainter(
+    text: TextSpan(
+      text: text,
+      style: const TextStyle(
+        fontSize: 16,
+        fontFamily: 'Roboto',
+        fontWeight: FontWeight.w400,
+      ),
+    ),
+    maxLines: 3, // Define o número máximo de linhas para 3
+    textDirection: TextDirection.ltr,
+  )..layout(minWidth: 0, maxWidth: double.infinity);
+  return textPainter.height;
+}
 
 
 
