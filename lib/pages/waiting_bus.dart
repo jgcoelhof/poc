@@ -87,8 +87,7 @@ class _WaitingBusPageState extends State<WaitingBusPage> {
                 height: 35,
               ),
               Text(
-                busNumber ??
-                    '', // Usando operador de coalescência nula para lidar com valores nulos
+                busNumber ?? '',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: Color(0xFF4BA4E3),
@@ -98,20 +97,23 @@ class _WaitingBusPageState extends State<WaitingBusPage> {
                   height: 0,
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 70),
-                child: Text(
-                  busName ??
-                      '', // Usando operador de coalescência nula para lidar com valores nulos
-                  style: const TextStyle(
-                    color: Color(0xFF132632),
-                    fontSize: 24,
-                    fontFamily: 'Roboto',
-                    fontWeight: FontWeight.w400,
-                    height: 0,
-                  ),
-                ),
-              ),
+            Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 70),
+  child: Center(
+    child: Text(
+      busName.split("-")[1].trim(),
+      textAlign: TextAlign.center,
+      style: const TextStyle(
+        color: Color(0xFF132632),
+        fontSize: 24,
+        fontFamily: 'Roboto',
+        fontWeight: FontWeight.w400,
+        height: 0,
+      ),
+    ),
+  ),
+),
+
               const SizedBox(
                 height: 40,
               ),
@@ -129,13 +131,22 @@ class _WaitingBusPageState extends State<WaitingBusPage> {
                       ),
                     ),
                     TextSpan(
-                      text: arrivalTime ??
-                          '', // Usando operador de coalescência nula para lidar com valores nulos
+                      text: arrivalTime ?? '',
                       style: const TextStyle(
                         color: Color(0xFF132632),
                         fontSize: 16,
                         fontFamily: 'Roboto',
                         fontWeight: FontWeight.w700,
+                        height: 0,
+                      ),
+                    ),
+                    TextSpan(
+                      text: arrivalTime == '1' ? ' minuto' : ' minutos',
+                      style: const TextStyle(
+                        color: Color(0xFF132632),
+                        fontSize: 16,
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w400,
                         height: 0,
                       ),
                     ),

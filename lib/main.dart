@@ -14,7 +14,7 @@ import 'package:poc/services/api_service.dart';
 
 Future<void> main() async {
   try {
-    final json = await fetchAPI();
+    final json = await fetchBusAPI();
     if (json.isNotEmpty) {
       print(json);
     } else {
@@ -24,7 +24,10 @@ Future<void> main() async {
     print('Erro ao buscar dados da API: $e');
   }
   FlutterBluePlus.setLogLevel(LogLevel.verbose, color: true);
-  runApp(const FlutterBlueApp());
+  runApp(  MaterialApp(
+            home: const BusListPage(),
+            color: Colors.lightBlue,
+            navigatorObservers: [BluetoothAdapterStateObserver()]));
 }
 
 //

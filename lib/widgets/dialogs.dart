@@ -4,25 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:poc/pages/waiting_bus.dart';
 
 Widget confirmBusDialog(BuildContext context, String busNumber, String busName, String arrivalTime) {
-  // Calcula a altura do texto do busName
-  final double busNameTextHeight = _calculateTextHeight(busName);
-
-  // Define a altura máxima do AlertDialog
-  final double maxDialogHeight = 205.0;
+  final int numberOfLines = busName.split('\n').length;
+  double additionalHeight = numberOfLines * 20.0;
+  final double minDialogHeight = 205.0;
+  final double maxDialogHeight = 265.0;
+  double dialogHeight = minDialogHeight + additionalHeight;
+  dialogHeight = dialogHeight > maxDialogHeight ? maxDialogHeight : dialogHeight;
 
   return AlertDialog(
     content: SingleChildScrollView(
       child: SizedBox(
         width: 310,
-        // Limita a altura do AlertDialog
-        height: busNameTextHeight > maxDialogHeight ? maxDialogHeight : busNameTextHeight + 190,
+        height: dialogHeight,
         child: Column(
           children: [
             const SizedBox(
               height: 20,
             ),
             Text(
-              busName, // Usando o nome do ônibus fornecido
+              busName,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 color: Color(0xFF132632),
@@ -109,23 +109,6 @@ Widget confirmBusDialog(BuildContext context, String busNumber, String busName, 
       ),
     ),
   );
-}
-
-// Função auxiliar para calcular a altura do texto
-double _calculateTextHeight(String text) {
-  final TextPainter textPainter = TextPainter(
-    text: TextSpan(
-      text: text,
-      style: const TextStyle(
-        fontSize: 16,
-        fontFamily: 'Roboto',
-        fontWeight: FontWeight.w400,
-      ),
-    ),
-    maxLines: 3, // Define o número máximo de linhas para 3
-    textDirection: TextDirection.ltr,
-  )..layout(minWidth: 0, maxWidth: double.infinity);
-  return textPainter.height;
 }
 
 
