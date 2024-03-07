@@ -197,7 +197,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
       children: <Widget>[
         TextButton(
           onPressed: onDiscoverServicesPressed,
-          child: const Text("Get Services"),
+          child: const Text("Obter Serviços"),
         ),
         const IconButton(
           icon: SizedBox(
@@ -229,7 +229,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
       TextButton(
           onPressed: _isConnecting ? onCancelPressed : (isConnected ? onDisconnectPressed : onConnectPressed),
           child: Text(
-            _isConnecting ? "CANCEL" : (isConnected ? "DISCONNECT" : "CONNECT"),
+            _isConnecting ? "CANCELAR" : (isConnected ? "DESCONECTAR" : "CONECTAR"),
             style: Theme.of(context).primaryTextTheme.labelLarge?.copyWith(color: Colors.white),
           ))
     ]);

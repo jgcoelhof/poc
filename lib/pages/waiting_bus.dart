@@ -87,7 +87,7 @@ class _WaitingBusPageState extends State<WaitingBusPage> {
                 height: 35,
               ),
               Text(
-                busNumber ?? '',
+                busNumber,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: Color(0xFF4BA4E3),
@@ -131,7 +131,7 @@ class _WaitingBusPageState extends State<WaitingBusPage> {
                       ),
                     ),
                     TextSpan(
-                      text: arrivalTime ?? '',
+                      text: arrivalTime,
                       style: const TextStyle(
                         color: Color(0xFF132632),
                         fontSize: 16,

@@ -84,7 +84,7 @@ class _ScanResultTileState extends State<ScanResultTile> {
         foregroundColor: Colors.white,
       ),
       onPressed: (widget.result.advertisementData.connectable) ? widget.onTap : null,
-      child: isConnected ? const Text('OPEN') : const Text('CONNECT'),
+      child: isConnected ? const Text('ABRIR') : const Text('CONECTAR'),
     );
   }
 
@@ -118,7 +118,7 @@ class _ScanResultTileState extends State<ScanResultTile> {
       leading: Text(widget.result.rssi.toString()),
       trailing: _buildConnectButton(context),
       children: <Widget>[
-        if (adv.advName.isNotEmpty) _buildAdvRow(context, 'Name', adv.advName),
+        if (adv.advName.isNotEmpty) _buildAdvRow(context, 'Nome', adv.advName),
         if (adv.txPowerLevel != null) _buildAdvRow(context, 'Tx Power Level', '${adv.txPowerLevel}'),
         if (adv.msd.isNotEmpty) _buildAdvRow(context, 'Manufacturer Data', getNiceManufacturerData(adv.msd)),
         if (adv.serviceUuids.isNotEmpty) _buildAdvRow(context, 'Service UUIDs', getNiceServiceUuids(adv.serviceUuids)),

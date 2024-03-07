@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:poc/pages/waiting_bus.dart';
-import 'package:flutter/material.dart';
-import 'package:poc/pages/waiting_bus.dart';
 
 Widget confirmBusDialog(BuildContext context, String busNumber, String busName, String arrivalTime) {
   final int numberOfLines = busName.split('\n').length;
   double additionalHeight = numberOfLines * 20.0;
-  final double minDialogHeight = 205.0;
-  final double maxDialogHeight = 265.0;
+  const double minDialogHeight = 205.0;
+  const double maxDialogHeight = 265.0;
   double dialogHeight = minDialogHeight + additionalHeight;
   dialogHeight = dialogHeight > maxDialogHeight ? maxDialogHeight : dialogHeight;
 

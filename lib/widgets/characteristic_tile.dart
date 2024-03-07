@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:poc/pages/waiting_bus.dart';
 
 import "../utils/snackbar.dart";
 
@@ -54,19 +56,41 @@ class _CharacteristicTileState extends State<CharacteristicTile> {
     } catch (e) {
       Snackbar.show(ABC.c, prettyException("Read Error:", e), success: false);
     }
-  }
-
-  Future onWritePressed() async {
-    try {
-      await c.write(_getRandomBytes(), withoutResponse: c.properties.writeWithoutResponse);
-      Snackbar.show(ABC.c, "Write: Success", success: true);
-      if (c.properties.read) {
-        await c.read();
-      }
-    } catch (e) {
-      Snackbar.show(ABC.c, prettyException("Write Error:", e), success: false);
+  }Future onWritePressed() async {
+  try {
+    // Obtém os dados da API
+    Map<String, dynamic>? busData = await fetchBusData();
+    
+    // Verifica se os dados da API são válidos e se a lista não está vazia
+    if (busData == null || busData.isEmpty) {
+      print('Dados da API não estão disponíveis ou a lista está vazia.');
+      Snackbar.show(ABC.c, "API data is not available or the list is empty", success: false);
+      return;
     }
+    
+    // Transforma os dados em uma lista de bytes para escrever no Bluetooth
+    List<int> bytesToWrite = [];
+    busData.forEach((key, value) {
+      bytesToWrite.addAll(utf8.encode("$key: $value\n"));
+    });
+
+    // Log dos dados a serem enviados
+    print('Dados a serem enviados: $busData');
+
+    // Escreve os bytes no Bluetooth
+    await c.write(bytesToWrite, withoutResponse: c.properties.writeWithoutResponse);
+
+    // Log do sucesso ao enviar os dados
+    print('Dados enviados com sucesso: $busData');
+
+    Snackbar.show(ABC.c, "Write: Success", success: true);
+    if (c.properties.read) {
+      await c.read();
+    }
+  } catch (e) {
+    Snackbar.show(ABC.c, prettyException("Write Error:", e), success: false);
   }
+}
 
   Future onSubscribePressed() async {
     try {
