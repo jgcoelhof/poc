@@ -97,23 +97,22 @@ class _WaitingBusPageState extends State<WaitingBusPage> {
                   height: 0,
                 ),
               ),
-            Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 70),
-  child: Center(
-    child: Text(
-      busName.split("-")[1].trim(),
-      textAlign: TextAlign.center,
-      style: const TextStyle(
-        color: Color(0xFF132632),
-        fontSize: 24,
-        fontFamily: 'Roboto',
-        fontWeight: FontWeight.w400,
-        height: 0,
-      ),
-    ),
-  ),
-),
-
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 70),
+                child: Center(
+                  child: Text(
+                    busName.split("-")[1].trim(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Color(0xFF132632),
+                      fontSize: 24,
+                      fontFamily: 'Roboto',
+                      fontWeight: FontWeight.w400,
+                      height: 0,
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(
                 height: 40,
               ),

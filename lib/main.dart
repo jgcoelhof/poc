@@ -115,29 +115,47 @@ class BluetoothAdapterStateObserver extends NavigatorObserver {
     _adapterStateSubscription = null;
   }
 }
-*/
-// Copyright 2017-2023, Charles Weinberger & Paul DeMarco.
+*/// Copyright 2017-2023, Charles Weinberger & Paul DeMarco.
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
+
+// ignore_for_file: avoid_print
 
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:poc/pages/bluetooth_off_screen.dart';
-import 'package:poc/pages/scan_screen.dart';
+import 'package:poc/pages/bus_list_page.dart';
+import 'package:poc/services/api_service.dart';
 
+import 'pages/bluetooth_off_page.dart';
 
-
-void main() {
+Future<void> main() async {
+  try {
+    final json = await fetchBusAPI();
+    if (json.isNotEmpty) {
+      print(json);
+    } else {
+      print('A resposta da API está vazia.');
+    }
+  } catch (e) {
+    print('Erro ao buscar dados da API: $e');
+  }
   FlutterBluePlus.setLogLevel(LogLevel.verbose, color: true);
-  runApp(const FlutterBlueApp());
+  runApp(
+    MaterialApp(
+      home: const FlutterBlueApp(), // const BusListPage(),
+      color: Colors.lightBlue,
+      navigatorObservers: [BluetoothAdapterStateObserver()],
+    ),
+  );
 }
 
 //
 // This widget shows BluetoothOffScreen or
 // ScanScreen depending on the adapter state
 //
+
 class FlutterBlueApp extends StatefulWidget {
   const FlutterBlueApp({Key? key}) : super(key: key);
 
@@ -153,7 +171,8 @@ class _FlutterBlueAppState extends State<FlutterBlueApp> {
   @override
   void initState() {
     super.initState();
-    _adapterStateStateSubscription = FlutterBluePlus.adapterState.listen((state) {
+    _adapterStateStateSubscription =
+        FlutterBluePlus.adapterState.listen((state) {
       _adapterState = state;
       if (mounted) {
         setState(() {});
@@ -170,7 +189,11 @@ class _FlutterBlueAppState extends State<FlutterBlueApp> {
   @override
   Widget build(BuildContext context) {
     Widget screen = _adapterState == BluetoothAdapterState.on
-        ? const ScanScreen()
+        ? MaterialApp(
+            home: const BusListPage(), // const ScanScreen(),
+            color: Colors.lightBlue,
+            navigatorObservers: [BluetoothAdapterStateObserver()],
+          )
         : BluetoothOffScreen(adapterState: _adapterState);
 
     return MaterialApp(
@@ -192,7 +215,8 @@ class BluetoothAdapterStateObserver extends NavigatorObserver {
     super.didPush(route, previousRoute);
     if (route.settings.name == '/DeviceScreen') {
       // Start listening to Bluetooth state changes when a new route is pushed
-      _adapterStateSubscription ??= FlutterBluePlus.adapterState.listen((state) {
+      _adapterStateSubscription ??=
+          FlutterBluePlus.adapterState.listen((state) {
         if (state != BluetoothAdapterState.on) {
           // Pop the current route if Bluetooth is off
           navigator?.pop();
