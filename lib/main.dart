@@ -1,16 +1,16 @@
-/*// Copyright 2017-2023, Charles Weinberger & Paul DeMarco.
+// Copyright 2017-2023, Charles Weinberger & Paul DeMarco.
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
 // ignore_for_file: avoid_print
-
+/*
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:poc/pages/bluetooth_off_page.dart';
 import 'package:poc/pages/bus_list_page.dart';
-import 'package:poc/pages/scan_screen.dart';
-import 'pages/bluetooth_off_screen.dart';
+import 'package:poc/pages/scan_page.dart';
 import 'package:poc/services/api_service.dart';
 void main() {
   FlutterBluePlus.setLogLevel(LogLevel.verbose, color: true);
@@ -114,8 +114,8 @@ class BluetoothAdapterStateObserver extends NavigatorObserver {
     _adapterStateSubscription?.cancel();
     _adapterStateSubscription = null;
   }
-}
-*/// Copyright 2017-2023, Charles Weinberger & Paul DeMarco.
+}*/
+// Copyright 2017-2023, Charles Weinberger & Paul DeMarco.
 // All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 

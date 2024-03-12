@@ -77,10 +77,11 @@ Widget confirmBusDialog({
                 ),
               ),
               child: TextButton(
-                onPressed: () async {
+                onPressed: () async  {
                   bool writeResult =
                       await onWritePressed(busNumber, busNumberCharacteristic);
                   if (writeResult) {
+                    // ignore: use_build_context_synchronously
                     Navigator.push(
                       context,
                       MaterialPageRoute(

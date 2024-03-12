@@ -2,8 +2,38 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:poc/utils/snackbar.dart';
+import 'package:poc/utils/utils.dart';
+
+final Map<DeviceIdentifier, StreamControllerReemit<bool>> _dglobal = {};
+
+extension Extra on BluetoothDevice {
+  Future<void> disconnectAndUpdateStream({bool queue = true}) async {
+    _dstream.add(true);
+    try {
+      await disconnect(queue: queue);
+    } finally {
+      _dstream.add(false);
+    }
+  }
+  StreamControllerReemit<bool> get _dstream {
+    _dglobal[remoteId] ??= StreamControllerReemit(initialValue: false);
+    return _dglobal[remoteId]!;
+  }
+}
+
+Future onDisconnectPressed(BluetoothDevice device) async {
+  try {
+    await device.disconnectAndUpdateStream();
+    Snackbar.show(ABC.c, "Disconnect: Success", success: true);
+  } catch (e) {
+    Snackbar.show(ABC.c, prettyException("Disconnect Error:", e),
+        success: false);
+  }
+}
 
 Future<Map<String, dynamic>?> fetchBusData() async {
   var url =
@@ -43,11 +73,11 @@ class WaitingBusPage extends StatefulWidget {
   @override
   State<WaitingBusPage> createState() => _WaitingBusPageState();
 }
-
 class _WaitingBusPageState extends State<WaitingBusPage> {
   late String busNumber;
   late String busName;
   late String arrivalTime;
+  late BluetoothDevice systemDevices;
 
   @override
   void initState() {
@@ -188,6 +218,7 @@ class _WaitingBusPageState extends State<WaitingBusPage> {
                 ),
                 child: TextButton(
                   onPressed: () {
+                    onDisconnectPressed(systemDevices);
                     Navigator.pop(context);
                   },
                   child: const Row(
