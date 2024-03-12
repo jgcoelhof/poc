@@ -87,6 +87,11 @@ class _WaitingBusPageState extends State<WaitingBusPage> {
     busNumber = widget.busNumber;
     busName = widget.busName;
     arrivalTime = widget.arrivalTime;
+    List<BluetoothDevice> connectedDevices = FlutterBluePlus.connectedDevices;
+    for (var connectedDevice in connectedDevices) {
+      log('connectedDevice: $connectedDevice');
+      systemDevices = connectedDevice;
+    }
   }
 
   @override
@@ -219,9 +224,11 @@ class _WaitingBusPageState extends State<WaitingBusPage> {
                   ),
                 ),
                 child: TextButton(
-                  onPressed: () {
-                    onDisconnectPressed(systemDevices);
-                    Navigator.pop(context);
+                  onPressed: () async {
+                    await onDisconnectPressed(systemDevices);
+                    if (mounted) {
+                      Navigator.pop(context);
+                    }
                   },
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,

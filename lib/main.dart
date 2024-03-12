@@ -125,10 +125,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:poc/pages/bus_list_page.dart';
+import 'package:poc/pages/initial_ble_page.dart';
+import 'package:poc/pages/scan_by_stops_page.dart';
 import 'package:poc/services/api_service.dart';
-
-import 'pages/bluetooth_off_page.dart';
 
 Future<void> main() async {
   try {
@@ -190,11 +189,14 @@ class _FlutterBlueAppState extends State<FlutterBlueApp> {
   Widget build(BuildContext context) {
     Widget screen = _adapterState == BluetoothAdapterState.on
         ? MaterialApp(
-            home: const BusListPage(), // const ScanScreen(),
+            home:
+                const ScanByStopsPage(), // const BusListPage(), // const ScanScreen(),
             color: Colors.lightBlue,
             navigatorObservers: [BluetoothAdapterStateObserver()],
           )
-        : BluetoothOffScreen(adapterState: _adapterState);
+        : InitialBlePage(
+            adapterState:
+                _adapterState); // BluetoothOffScreen(adapterState: _adapterState);
 
     return MaterialApp(
       color: Colors.lightBlue,

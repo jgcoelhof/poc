@@ -4,17 +4,18 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:poc/consts.dart';
 import 'package:poc/services/api_service.dart';
 import 'package:poc/utils/dialogs.dart';
-import 'package:poc/utils/extra.dart';
-import 'package:poc/utils/snackbar.dart';
-
-const String accessBusStopServiceUUID = '3fd792fc-9e11-4d98-b981-ce0d7532651b';
-const String busStopIdUUID = '3fd792fc-9e11-4d98-b981-ce0d7532651c';
-const String busRoutesUUID = '3fd792fc-9e11-4d98-b981-ce0d7532651e';
 
 class BusListPage extends StatefulWidget {
-  const BusListPage({Key? key}) : super(key: key);
+  final BluetoothService accessBusStopService;
+  final String busStopId;
+  const BusListPage({
+    Key? key,
+    required this.accessBusStopService,
+    required this.busStopId,
+  }) : super(key: key);
 
   @override
   State<BusListPage> createState() => _BusListPageState();
@@ -24,14 +25,6 @@ class _BusListPageState extends State<BusListPage> {
   late List<Map<String, dynamic>> busData = [];
   late Timer _timer;
 
-  /// Scan BLE variables
-  List<BluetoothDevice> _systemDevices = [];
-  List<ScanResult> _scanResults = [];
-  bool _isScanning = false;
-  late StreamSubscription<List<ScanResult>> _scanResultsSubscription;
-  late StreamSubscription<bool> _isScanningSubscription;
-  List<Guid> totemService = [Guid.fromString(accessBusStopServiceUUID)];
-  // BluetoothCharacteristic? busNumberCharacteristic;
   BluetoothCharacteristic? busRoutesCharacteristic;
   String busStopIdValue = '';
 
@@ -39,141 +32,26 @@ class _BusListPageState extends State<BusListPage> {
   void initState() {
     super.initState();
 
-    /// Scan BLE devices
-    _scanResultsSubscription = FlutterBluePlus.scanResults.listen((results) {
-      _scanResults = results;
-      log('_scanResults: $_scanResults');
-      if (_scanResults.isNotEmpty) {
-        onConnectPressed(_scanResults.first.device);
-      }
-      if (mounted) {
-        setState(() {});
-      }
-    }, onError: (e) {
-      Snackbar.show(ABC.b, prettyException("Scan Error:", e), success: false);
-    });
+    busStopIdValue = widget.busStopId;
 
-    _isScanningSubscription = FlutterBluePlus.isScanning.listen((state) {
-      _isScanning = state;
-      log('_isScanning: $_isScanning');
-      if (_isScanning) {
-        /// implement numberOfScans logic
-      }
-      if (_isScanning == false && _scanResults.isEmpty) {
-        log('Nenhuma Parada Encontrada!');
+    if (busStopIdValue.isNotEmpty) {
+      fetchBusData();
+      _timer = Timer.periodic(
+          const Duration(minutes: 1), (Timer t) => fetchBusData());
+    }
 
-        /// implement numberOfScans logic
-      }
-      if (mounted) {
-        setState(() {});
-      }
-    });
-
-    onScanPressed();
+    //!TODO:
+    /// get busRoutesCharacteristic
+    busRoutesCharacteristic = widget.accessBusStopService.characteristics
+        .firstWhere((element) =>
+            element.characteristicUuid == Guid.fromString(busRoutesUUID));
+    log('busRoutesCharacteristic: $busRoutesCharacteristic');
   }
 
   @override
   void dispose() {
-    /// dispose scan ble subscriptions
-    _scanResultsSubscription.cancel();
-    _isScanningSubscription.cancel();
-
     _timer.cancel();
     super.dispose();
-  }
-
-  Future onScanPressed() async {
-    try {
-      _systemDevices = await FlutterBluePlus.systemDevices;
-    } catch (e) {
-      Snackbar.show(ABC.b, prettyException("System Devices Error:", e),
-          success: false);
-    }
-    try {
-      await FlutterBluePlus.startScan(
-          withServices: totemService, timeout: const Duration(seconds: 15));
-    } catch (e) {
-      Snackbar.show(ABC.b, prettyException("Start Scan Error:", e),
-          success: false);
-    }
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  Future onStopPressed() async {
-    try {
-      FlutterBluePlus.stopScan();
-    } catch (e) {
-      Snackbar.show(ABC.b, prettyException("Stop Scan Error:", e),
-          success: false);
-    }
-  }
-
-  void onConnectPressed(BluetoothDevice device) async {
-    await device.connectAndUpdateStream().catchError((e) {
-      Snackbar.show(ABC.c, prettyException("Connect Error:", e),
-          success: false);
-    });
-    log('Connected with $device !?');
-
-    List<BluetoothDevice> connectedDevices = FlutterBluePlus.connectedDevices;
-    for (var connectedDevice in connectedDevices) {
-      log('connectedDevice: $connectedDevice');
-    }
-
-    /// Discover Device Services
-    // Note: You must call discoverServices after every re-connection!
-    List<BluetoothService> services = await device.discoverServices();
-    // for (var service in services) {
-    //   // do something with service
-    //   log('Device_Service: $service');
-    // }
-
-    /// Read Characteristic ID da Parada
-    BluetoothService accessBusStopService = services.firstWhere((element) =>
-        element.serviceUuid == Guid.fromString(accessBusStopServiceUUID));
-    log('accessBusStopService: $accessBusStopService');
-    BluetoothCharacteristic busStopIdCharacteristic =
-        accessBusStopService.characteristics.firstWhere((element) =>
-            element.characteristicUuid == Guid.fromString(busStopIdUUID));
-    log('busStopIdCharacteristic: $busStopIdCharacteristic');
-    if (busStopIdCharacteristic.properties.read) {
-      List<int> readCharResult = await busStopIdCharacteristic.read();
-      log('readCharResult: $readCharResult');
-
-      // converte to String
-      busStopIdValue = String.fromCharCodes(readCharResult);
-      log('busStopIdValue: $busStopIdValue');
-
-      if (busStopIdValue.isNotEmpty) {
-        //! After read characteristic busStopIdUUID
-        fetchBusData();
-        _timer = Timer.periodic(
-            const Duration(minutes: 1), (Timer t) => fetchBusData());
-      }
-
-      /// get busRoutesCharacteristic
-      busRoutesCharacteristic = accessBusStopService.characteristics.firstWhere(
-          (element) =>
-              element.characteristicUuid == Guid.fromString(busRoutesUUID));
-      log('busRoutesCharacteristic: $busRoutesCharacteristic');
-    }
-
-    // MaterialPageRoute route = MaterialPageRoute(
-    //     builder: (context) => DeviceScreen(device: device),
-    //     settings: const RouteSettings(name: '/DeviceScreen'));
-    // Navigator.of(context).push(route);
-  }
-
-  Future onRefresh() {
-    if (_isScanning == false) {
-      FlutterBluePlus.startScan(timeout: const Duration(seconds: 15));
-    }
-    if (mounted) {
-      setState(() {});
-    }
-    return Future.delayed(const Duration(milliseconds: 500));
   }
 
   Future<void> fetchBusData() async {
@@ -397,24 +275,26 @@ class _BusListPageState extends State<BusListPage> {
                   ),
                 ),
         ),
-       /* floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return confirmBusDialog(
-                  context: context,
-                  busNumber: '075', // bus["busServiceNumber"].toString(),
-                  busName:
-                      '075 - Pici Unifor', // bus["patternName"].toString(),
-                  arrivalTime: '25', // bus["arrivalTime"].toString(),
-                  busNumberCharacteristic: busRoutesCharacteristic!,
-                );
-              },
-            );
-          },
-          child: const Icon(Icons.bus_alert),
-        ),*/
+        floatingActionButton: busData.isEmpty
+            ? FloatingActionButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return confirmBusDialog(
+                        context: context,
+                        busNumber: '075', // bus["busServiceNumber"].toString(),
+                        busName:
+                            '075 - Pici Unifor', // bus["patternName"].toString(),
+                        arrivalTime: '25', // bus["arrivalTime"].toString(),
+                        busNumberCharacteristic: busRoutesCharacteristic!,
+                      );
+                    },
+                  );
+                },
+                child: const Icon(Icons.bus_alert),
+              )
+            : null,
       ),
     );
   }
