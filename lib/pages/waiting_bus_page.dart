@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:poc/main.dart';
 import 'package:poc/utils/snackbar.dart';
 import 'package:poc/utils/utils.dart';
 
@@ -84,6 +85,7 @@ class _WaitingBusPageState extends State<WaitingBusPage> {
   @override
   void initState() {
     super.initState();
+    log('initState_WaitingBusPage');
     busNumber = widget.busNumber;
     busName = widget.busName;
     arrivalTime = widget.arrivalTime;
@@ -227,7 +229,13 @@ class _WaitingBusPageState extends State<WaitingBusPage> {
                   onPressed: () async {
                     await onDisconnectPressed(systemDevices);
                     if (mounted) {
-                      Navigator.pop(context);
+                      // Navigator.pop(context);
+                      Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  const FlutterBlueApp() /* ScanByStopsPage() */),
+                          (route) => false);
                     }
                   },
                   child: const Row(

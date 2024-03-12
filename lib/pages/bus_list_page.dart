@@ -32,26 +32,34 @@ class _BusListPageState extends State<BusListPage> {
   void initState() {
     super.initState();
 
-    busStopIdValue = widget.busStopId;
+    log('initState_BusListPage');
 
-    if (busStopIdValue.isNotEmpty) {
-      fetchBusData();
-      _timer = Timer.periodic(
-          const Duration(minutes: 1), (Timer t) => fetchBusData());
-    }
-
-    //!TODO:
-    /// get busRoutesCharacteristic
-    busRoutesCharacteristic = widget.accessBusStopService.characteristics
-        .firstWhere((element) =>
-            element.characteristicUuid == Guid.fromString(busRoutesUUID));
-    log('busRoutesCharacteristic: $busRoutesCharacteristic');
+    initBusApi();
   }
 
   @override
   void dispose() {
+    log('dispose_BusListPage');
     _timer.cancel();
     super.dispose();
+  }
+
+  void initBusApi() async {
+    busStopIdValue = widget.busStopId;
+    log('busStopIdValue: $busStopIdValue');
+
+    if (busStopIdValue.isNotEmpty) {
+      await fetchBusData();
+      _timer = Timer.periodic(
+          const Duration(minutes: 1), (Timer t) async => await fetchBusData());
+    }
+
+    /// get busRoutesCharacteristic
+    log('accessBusStopService: ${widget.accessBusStopService}');
+    busRoutesCharacteristic = widget.accessBusStopService.characteristics
+        .firstWhere((element) =>
+            element.characteristicUuid == Guid.fromString(busRoutesUUID));
+    log('busRoutesCharacteristic: $busRoutesCharacteristic');
   }
 
   Future<void> fetchBusData() async {
@@ -275,26 +283,27 @@ class _BusListPageState extends State<BusListPage> {
                   ),
                 ),
         ),
-        floatingActionButton: busData.isEmpty
-            ? FloatingActionButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return confirmBusDialog(
-                        context: context,
-                        busNumber: '075', // bus["busServiceNumber"].toString(),
-                        busName:
-                            '075 - Pici Unifor', // bus["patternName"].toString(),
-                        arrivalTime: '25', // bus["arrivalTime"].toString(),
-                        busNumberCharacteristic: busRoutesCharacteristic!,
-                      );
-                    },
-                  );
-                },
-                child: const Icon(Icons.bus_alert),
-              )
-            : null,
+        // sem API, mock:
+        // floatingActionButton: busData.isEmpty
+        //     ? FloatingActionButton(
+        //         onPressed: () {
+        //           showDialog(
+        //             context: context,
+        //             builder: (BuildContext context) {
+        //               return confirmBusDialog(
+        //                 context: context,
+        //                 busNumber: '075', // bus["busServiceNumber"].toString(),
+        //                 busName:
+        //                     '075 - Pici Unifor', // bus["patternName"].toString(),
+        //                 arrivalTime: '25', // bus["arrivalTime"].toString(),
+        //                 busNumberCharacteristic: busRoutesCharacteristic!,
+        //               );
+        //             },
+        //           );
+        //         },
+        //         child: const Icon(Icons.bus_alert),
+        //       )
+        //     : null,
       ),
     );
   }

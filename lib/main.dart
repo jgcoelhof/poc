@@ -122,6 +122,7 @@ class BluetoothAdapterStateObserver extends NavigatorObserver {
 // ignore_for_file: avoid_print
 
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
@@ -170,6 +171,7 @@ class _FlutterBlueAppState extends State<FlutterBlueApp> {
   @override
   void initState() {
     super.initState();
+    log('initState_FlutterBlueApp');
     _adapterStateStateSubscription =
         FlutterBluePlus.adapterState.listen((state) {
       _adapterState = state;
@@ -181,6 +183,7 @@ class _FlutterBlueAppState extends State<FlutterBlueApp> {
 
   @override
   void dispose() {
+    log('dispose_FlutterBlueApp');
     _adapterStateStateSubscription.cancel();
     super.dispose();
   }
