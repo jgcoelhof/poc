@@ -12,7 +12,7 @@
 
 
     <application
-        android:label="poc"
+        android:label="Parada de Ônibus Acessível"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
