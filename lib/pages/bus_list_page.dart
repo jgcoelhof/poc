@@ -397,7 +397,7 @@ class _BusListPageState extends State<BusListPage> {
                   ),
                 ),
         ),
-        floatingActionButton: FloatingActionButton(
+       /* floatingActionButton: FloatingActionButton(
           onPressed: () {
             showDialog(
               context: context,
@@ -414,7 +414,7 @@ class _BusListPageState extends State<BusListPage> {
             );
           },
           child: const Icon(Icons.bus_alert),
-        ),
+        ),*/
       ),
     );
   }

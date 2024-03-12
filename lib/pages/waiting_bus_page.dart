@@ -19,13 +19,14 @@ extension Extra on BluetoothDevice {
       _dstream.add(false);
     }
   }
+
   StreamControllerReemit<bool> get _dstream {
     _dglobal[remoteId] ??= StreamControllerReemit(initialValue: false);
     return _dglobal[remoteId]!;
   }
 }
 
-Future onDisconnectPressed(BluetoothDevice device) async {
+Future<void> onDisconnectPressed(BluetoothDevice device) async {
   try {
     await device.disconnectAndUpdateStream();
     Snackbar.show(ABC.c, "Disconnect: Success", success: true);
@@ -73,6 +74,7 @@ class WaitingBusPage extends StatefulWidget {
   @override
   State<WaitingBusPage> createState() => _WaitingBusPageState();
 }
+
 class _WaitingBusPageState extends State<WaitingBusPage> {
   late String busNumber;
   late String busName;
