@@ -8,7 +8,7 @@
             "name": "poc",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "debug"
+            "flutterMode": "release"
         },
         {
             "name": "poc (profile mode)",
